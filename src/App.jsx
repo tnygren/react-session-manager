@@ -1,35 +1,64 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from "react";
+import Cookies from "js-cookie";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  return (
-    <>
+  useEffect(() => {
+    const userCookie = Cookies.get("loggedInUser");
+    if (userCookie) {
+      setLoggedIn(true);
+    }
+  }, []);
+
+  const handleLogin = () => {
+    if (username === "donald" && password === "duck") {
+      Cookies.set("loggedInUser", username);
+      console.log(Cookies.get("loggedInUser"));
+      setLoggedIn(true);
+    } else {
+      alert("Invalid username or password");
+    }
+  };
+
+  const handleLogout = () => {
+    Cookies.remove("loggedInUser");
+    setLoggedIn(false);
+  };
+
+  if (loggedIn) {
+    return (
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <h1>Welcome, {username}!</h1>
+        <button onClick={handleLogout}>Logout</button>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+    );
+  } else {
+    return (
+      <div className="login-container">
+        <p>Username: donald, Password: duck</p>
+        <h1>Login</h1>
+        <label>Username:</label>
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <br />
+        <label>Password:</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <br />
+        <button onClick={handleLogin}>Login</button>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    );
+  }
+};
 
-export default App
+export default App;
